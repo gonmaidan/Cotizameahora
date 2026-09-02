@@ -19,7 +19,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -1444,6 +1444,14 @@
     const status = document.getElementById('historico-status');
     const canvas = document.getElementById('historico-chart');
 
+    if (typeof Chart === 'undefined'){
+      status.textContent = 'No pudimos cargar la librería del gráfico (Chart.js). Revisá la consola del navegador.';
+      status.classList.add('error-msg');
+      console.error('Chart.js no está disponible: revisá que el <script> de cdnjs haya cargado bien.');
+      historicoLoaded = false;
+      return;
+    }
+
     try {
       const data = await fetchJson('https://api.argentinadatos.com/v1/cotizaciones/dolares/oficial');
 
@@ -1493,6 +1501,7 @@
     } catch (err){
       status.textContent = 'No pudimos cargar el histórico en este momento.';
       status.classList.add('error-msg');
+      console.error('Error cargando el histórico del dólar oficial:', err);
       historicoLoaded = false; // permite reintentar si el usuario vuelve a la solapa
     }
   }
